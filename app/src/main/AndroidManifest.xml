@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+    <!-- Permissions you listed -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" tools:ignore="QueryAllPackagesPermission" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" tools:ignore="BatteryLife" />
+
+    <application android:allowBackup="true" android:icon="@drawable/ic_nothing" android:label="Essential Remapper Pro" android:theme="@style/Theme.Nothing">
+        <activity android:name=".MainActivity" android:exported="true">
+            <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
+        </activity>
+
+        <!-- AccessibilityService - Core for KeyEvent interception + dispatchGesture -->
+        <service android:name=".EssentialButtonService" android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" android:exported="true">
+            <intent-filter><action android:name="android.accessibilityservice.AccessibilityService"/></intent-filter>
+            <meta-data android:name="android.accessibilityservice" android:resource="@xml/accessibility_config"/>
+        </service>
+
+        <!-- Notification Access - Optional, for media state & better screenshot -->
+        <service android:name=".MediaNotificationService" android:label="Essential Remapper - Media State" android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" android:exported="true">
+            <intent-filter><action android:name="android.service.notification.NotificationListenerService"/></intent-filter>
+        </service>
+
+        <!-- Foreground Service - Keeps remapper alive when screen off -->
+        <service android:name=".OverlayService" android:exported="false" android:foregroundServiceType="specialUse">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE" android:value="gestureOverlay"/>
+        </service>
+
+        <service android:name=".KeepAliveService" android:exported="false" android:foregroundServiceType="specialUse">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE" android:value="keepAliveScreenOff"/>
+        </service>
+    </application>
+</manifest>

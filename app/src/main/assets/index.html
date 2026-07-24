@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Essential Remapper Pro - Nothing</title>
+<style>
+  :root {
+    --bg: #0a0a0a; --surface: #111111; --surface2: #1a1a1a; --border: #2a2a2a; --border2: #3a3a3a;
+    --text: #f0f0f0; --text2: #888; --text3: #555; --accent: #ffffff; --green: #00e676; --red: #ff1744; --amber: #ffab00; --blue: #00b0ff;
+    --radius: 16px; --radius-sm: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { background: var(--bg); color: var(--text); font-family: 'Helvetica Neue', Arial, sans-serif; min-height: 100vh; overflow-x: hidden; user-select: none; }
+  body::before { content: ''; position: fixed; inset: 0; background-image: radial-gradient(circle, #1e1e1e 1px, transparent 1px); background-size: 20px 20px; pointer-events: none; z-index: 0; opacity: 0.5; }
+  .app { position: relative; z-index: 1; max-width: 440px; margin: 0 auto; padding: 0 0 110px; }
+  .header { padding: 48px 20px 20px; border-bottom: 1px solid var(--border); display:flex; justify-content:space-between; align-items:flex-end; }
+  .logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .logo-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: pulse-dot 2.5s ease-in-out infinite; }
+  @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
+  .logo-text { font-size: 11px; letter-spacing: 0.2em; color: var(--text2); text-transform: uppercase; }
+  .header h1 { font-size: 26px; font-weight: 300; letter-spacing: -0.5px; line-height: 1.1; }
+  .header h1 span { color: var(--text2); }
+  .header-version { font-size:10px; color:var(--text3); letter-spacing:0.1em; text-align:right; }
+  .device-card { margin: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; position: relative; overflow: hidden; }
+  .device-label { font-size: 10px; letter-spacing: 0.15em; color: var(--text3); text-transform: uppercase; margin-bottom: 12px; }
+  .device-info { display: flex; align-items: center; gap: 14px; }
+  .device-icon { width: 44px; height: 44px; background: var(--surface2); border: 1px solid var(--border2); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .device-name { font-size: 15px; font-weight: 500; }
+  .device-sub { font-size: 11px; color: var(--text2); margin-top: 2px; line-height:1.4; }
+  .detect-status { display: flex; align-items: center; gap: 6px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .status-dot.green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .status-dot.amber { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
+  .status-dot.red { background: var(--red); }
+  .status-text { font-size: 11px; color: var(--text2); flex:1; }
+  .detect-btn { background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; color: var(--text); font-size: 10px; padding: 6px 10px; cursor: pointer; letter-spacing: 0.05em; }
+  .learning-card { margin: 0 16px 16px; background: linear-gradient(135deg, #111 0%, #1a1a1a 100%); border: 1px dashed var(--border2); border-radius: var(--radius); padding: 14px; display:none; }
+  .learning-card.active { display:block; }
+  .learning-title { font-size:12px; font-weight:600; letter-spacing:0.05em; }
+  .learning-sub { font-size:11px; color:var(--text2); margin-top:4px; line-height:1.4; }
+  .learning-progress { display:flex; gap:6px; margin-top:12px; }
+  .lp-dot { width:28px; height:6px; border-radius:3px; background:var(--border2); transition:all 0.2s; }
+  .lp-dot.on { background:var(--accent); }
+  .viz-section { margin: 0 16px 16px; }
+  .section-label { font-size: 10px; letter-spacing: 0.15em; color: var(--text3); text-transform: uppercase; margin-bottom: 10px; padding-left: 2px; }
+  .button-viz { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .ess-btn-wrap { position: relative; display: flex; align-items: center; justify-content: center; }
+  .ess-ring { position: absolute; border-radius: 50%; border: 1px solid transparent; transition: all 0.2s; }
+  .ess-ring-1 { width: 90px; height: 90px; } .ess-ring-2 { width: 110px; height: 110px; }
+  .ess-btn { width: 68px; height: 68px; border-radius: 50%; background: var(--surface2); border: 2px solid var(--border2); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.12s; position: relative; z-index: 1; }
+  .ess-btn:active { transform: scale(0.93); background:#222; border-color:#fff; }
+  .ess-btn-label { font-size: 9px; letter-spacing: 0.12em; color: var(--text3); text-transform: uppercase; }
+  .gesture-display { text-align: center; min-height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+  .gesture-name { font-size: 18px; font-weight: 300; letter-spacing: 0.05em; }
+  .gesture-action { font-size: 12px; color: var(--text2); }
+  .gesture-dots { display: flex; gap: 5px; margin-top: 4px; }
+  .gdot { width: 6px; height: 6px; border-radius: 50%; background: var(--border2); transition: background 0.15s; }
+  .gdot.lit { background: var(--accent); box-shadow:0 0 6px var(--accent); }
+  .tab-nav { display: flex; margin: 0 16px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 4px; gap: 2px; }
+  .tab-btn { flex: 1; background: transparent; border: none; color: var(--text2); font-size: 11px; letter-spacing: 0.08em; padding: 8px 4px; border-radius: 7px; cursor: pointer; text-transform: uppercase; transition: all 0.15s; }
+  .tab-btn.active { background: var(--surface2); color: var(--text); border: 1px solid var(--border2); }
+  .panel { display: none; } .panel.active { display: block; }
+  .gesture-map { margin: 0 16px; display: flex; flex-direction: column; gap: 8px; }
+  .gesture-row { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: border-color 0.15s; }
+  .gesture-row:active { border-color: var(--border2); transform:scale(0.99); }
+  .gesture-icon { width: 36px; height: 36px; background: var(--surface2); border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; }
+  .gesture-row-info { flex: 1; } .gesture-row-name { font-size: 13px; font-weight: 500; } .gesture-row-action { font-size: 11px; color: var(--text2); margin-top: 2px; } .gesture-row-timing { font-size: 10px; color: var(--text3); margin-top: 1px; }
+  .gesture-chevron { color: var(--text3); font-size: 16px; }
+  .settings-list { margin: 0 16px; display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+  .setting-row { background: var(--surface); padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+  .setting-info { flex: 1; } .setting-name { font-size: 13px; } .setting-sub { font-size: 11px; color: var(--text2); margin-top: 2px; line-height:1.3; }
+  .toggle { width: 44px; height: 24px; background: var(--border2); border-radius: 12px; position: relative; cursor: pointer; transition: background 0.2s; flex-shrink: 0; }
+  .toggle.on { background: var(--accent); } .toggle::after { content: ''; position: absolute; width: 18px; height: 18px; background: var(--bg); border-radius: 50%; top: 3px; left: 3px; transition: transform 0.2s; } .toggle.on::after { transform: translateX(20px); background: #000; }
+  .haptic-card { margin: 0 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+  .haptic-header { padding: 14px 16px 10px; display: flex; align-items: center; gap: 10px; }
+  .haptic-icon { width: 32px; height: 32px; background: var(--surface2); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .haptic-body { padding: 0 16px 16px; }
+  .haptic-levels { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 8px; }
+  .haptic-level { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 4px; text-align: center; cursor: pointer; transition: all 0.15s; }
+  .haptic-level.active { background: var(--accent); border-color: var(--accent); } .haptic-level-name { font-size: 10px; letter-spacing: 0.05em; color: var(--text2); } .haptic-level.active .haptic-level-name { color: #000; }
+  .h-bar { width: 4px; background: var(--border2); border-radius: 2px; }
+  .haptic-level.active .h-bar { background: #000; }
+  .haptic-bars { display: flex; justify-content: center; align-items: flex-end; gap: 2px; height: 16px; margin-bottom: 5px; }
+  .overlay-preview { margin: 10px 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; display: flex; align-items: center; justify-content: center; min-height: 80px; }
+  .overlay-demo { width: 60px; height: 60px; border-radius: 50%; background: transparent; border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 20px; transition: all 0.3s; }
+  .overlay-demo.nothing-style { border-radius: 4px; width: 8px; height: 50px; border: none; background: var(--accent); box-shadow: 0 0 20px var(--accent), 0 0 40px #ffffff40; }
+  .timing-card { margin: 0 16px 8px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; }
+  .timing-title { font-size: 12px; color: var(--text2); margin-bottom: 12px; letter-spacing: 0.05em; }
+  .timing-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; } .timing-label span:first-child { color: var(--text2); } .timing-label span:last-child { color: var(--text); }
+  input[type=range] { width:100%; -webkit-appearance:none; height:3px; background:var(--border2); border-radius:2px; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:16px; height:16px; background:var(--accent); border-radius:50%; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal-sheet { background: var(--surface); border: 1px solid var(--border); border-radius: 20px 20px 0 0; width: 100%; max-width: 440px; padding: 20px; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.16,1,0.3,1); max-height:85vh; overflow-y:auto; }
+  .modal-overlay.open .modal-sheet { transform: translateY(0); }
+  .modal-handle { width: 36px; height: 4px; background: var(--border2); border-radius: 2px; margin: 0 auto 20px; }
+  .modal-title { font-size: 15px; font-weight: 500; margin-bottom: 4px; } .modal-sub { font-size: 12px; color: var(--text2); margin-bottom: 20px; }
+  .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+  .action-option { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; cursor: pointer; transition: all 0.15s; text-align: left; }
+  .action-option.selected { border-color: var(--accent); background: #ffffff0a; } .action-option:active { transform: scale(0.97); }
+  .action-opt-icon { font-size: 20px; margin-bottom: 6px; } .action-opt-name { font-size: 12px; font-weight: 500; } .action-opt-desc { font-size: 10px; color: var(--text2); margin-top: 2px; }
+  .modal-btn { width: 100%; background: var(--accent); color: #000; border: none; border-radius: var(--radius-sm); padding: 14px; font-size: 14px; font-weight: 600; cursor: pointer; } .modal-cancel { width: 100%; background: transparent; color: var(--text2); border: none; padding: 12px; font-size: 13px; cursor: pointer; margin-top: 6px; }
+  .bottom-info { margin: 20px 16px 0; padding: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); display: flex; align-items: flex-start; gap: 10px; }
+  .info-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); flex-shrink: 0; margin-top:5px; } .info-text { font-size: 11px; color: var(--text2); line-height: 1.5; }
+  @keyframes ring-pulse { 0%{border-color:#ffffff00;transform:scale(1)} 30%{border-color:#ffffff80} 100%{border-color:#ffffff00;transform:scale(1.15)} }
+  .ess-ring.pulse { animation: ring-pulse 0.5s ease-out forwards; } .ess-ring-2.pulse { animation: ring-pulse 0.7s ease-out 0.1s forwards; }
+  .perm-banner { margin:0 16px 16px; background:#ffab0015; border:1px solid #ffab0040; border-radius:10px; padding:12px 14px; display:flex; gap:10px; align-items:center; }
+  .perm-banner.ok { background:#00e67615; border-color:#00e67640; }
+  .perm-icon { font-size:18px; } .perm-text { flex:1; font-size:11px; line-height:1.4; } .perm-text b { color:var(--text); }
+  .btn-small { background:var(--surface2); border:1px solid var(--border2); color:var(--text); padding:6px 12px; border-radius:8px; font-size:11px; cursor:pointer; white-space:nowrap; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div>
+      <div class="logo-row"><div class="logo-dot"></div><span class="logo-text">Nothing OS • PRO</span></div>
+      <h1>Essential Key<br><span>Remapper</span></h1>
+    </div>
+    <div class="header-version">v4.0<br>ALL DEVICES<br>UP TO PHONE 4</div>
+  </div>
+
+  <div class="device-card">
+    <div class="device-label">Auto detected device</div>
+    <div class="device-info">
+      <div class="device-icon">◍</div>
+      <div>
+        <div class="device-name" id="device-name">Detecting...</div>
+        <div class="device-sub" id="device-sub">Scanning your phone...</div>
+      </div>
+    </div>
+    <div class="detect-status">
+      <div class="status-dot amber" id="status-dot"></div>
+      <span class="status-text" id="status-text">Checking Essential button...</span>
+      <button class="detect-btn" id="detect-btn" onclick="detectDevice()">Re-scan</button>
+    </div>
+  </div>
+
+  <div class="learning-card" id="learning-card">
+    <div class="learning-title">🎯 LEARNING MODE ACTIVE</div>
+    <div class="learning-sub">Press your <b>Essential Button</b> 3 times. We will auto-detect its keycode (works even if Nothing changes it in OS updates).</div>
+    <div class="learning-progress">
+      <div class="lp-dot" id="lp1"></div><div class="lp-dot" id="lp2"></div><div class="lp-dot" id="lp3"></div>
+    </div>
+  </div>
+
+  <div class="perm-banner" id="perm-banner">
+    <div class="perm-icon">⚠️</div>
+    <div class="perm-text"><b>Accessibility Permission Required</b><br>Needed to intercept Essential Key and block Essential Space.</div>
+    <button class="btn-small" onclick="requestAccessibility()">Enable</button>
+  </div>
+
+  <div class="viz-section">
+    <div class="section-label">Test your button — Four gestures only</div>
+    <div class="button-viz">
+      <div class="ess-btn-wrap">
+        <div class="ess-ring ess-ring-2" id="ring2"></div>
+        <div class="ess-ring ess-ring-1" id="ring1"></div>
+        <div class="ess-btn" id="ess-btn" onmousedown="onBtnDown()" onmouseup="onBtnUp()" ontouchstart="onBtnDown(); event.preventDefault()" ontouchend="onBtnUp(); event.preventDefault()">
+          <span class="ess-btn-label">PRESS</span>
+        </div>
+      </div>
+      <div class="gesture-display">
+        <div class="gesture-name" id="gesture-name">—</div>
+        <div class="gesture-action" id="gesture-action">Waiting for press</div>
+        <div class="gesture-dots"><div class="gdot" id="gd1"></div><div class="gdot" id="gd2"></div><div class="gdot" id="gd3"></div><div class="gdot" id="gd4"></div></div>
+      </div>
+      <button class="detect-btn" id="learning-btn" style="display:none; margin-top:4px; background:#fff; color:#000;" onclick="startLearning()">START LEARNING MODE</button>
+    </div>
+  </div>
+
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('gestures', this)">Gestures</button>
+    <button class="tab-btn" onclick="switchTab('haptic', this)">Haptic</button>
+    <button class="tab-btn" onclick="switchTab('overlay', this)">Overlay</button>
+    <button class="tab-btn" onclick="switchTab('timing', this)">Timing</button>
+  </div>
+
+  <div class="panel active" id="panel-gestures">
+    <div class="gesture-map">
+      <div class="gesture-row" onclick="openModal('single')"><div class="gesture-icon">👆</div><div class="gesture-row-info"><div class="gesture-row-name">Single click</div><div class="gesture-row-action" id="action-single">Flashlight toggle</div><div class="gesture-row-timing">Instant</div></div><div class="gesture-chevron">›</div></div>
+      <div class="gesture-row" onclick="openModal('double')"><div class="gesture-icon">✌️</div><div class="gesture-row-info"><div class="gesture-row-name">Double click</div><div class="gesture-row-action" id="action-double">Camera</div><div class="gesture-row-timing" id="timing-double-label">≤ 300 ms between taps</div></div><div class="gesture-chevron">›</div></div>
+      <div class="gesture-row" onclick="openModal('triple')"><div class="gesture-icon">🤟</div><div class="gesture-row-info"><div class="gesture-row-name">Triple click</div><div class="gesture-row-action" id="action-triple">Screenshot</div><div class="gesture-row-timing">≤ 400 ms</div></div><div class="gesture-chevron">›</div></div>
+      <div class="gesture-row" onclick="openModal('long')"><div class="gesture-icon">✊</div><div class="gesture-row-info"><div class="gesture-row-name">Long hold</div><div class="gesture-row-action" id="action-long">Voice assistant</div><div class="gesture-row-timing" id="timing-long-label">Hold ≥ 600 ms</div></div><div class="gesture-chevron">›</div></div>
+    </div>
+    <div class="settings-list" style="margin-top:12px;">
+      <div class="setting-row"><div class="setting-info"><div class="setting-name">State-based automation</div><div class="setting-sub">Different action when media is playing (e.g. Play/Pause vs Flashlight)</div></div><div class="toggle" id="state-toggle" onclick="toggleEl(this); if(window.Android) Android.setStateAutomation(this.classList.contains('on'))"></div></div>
+    </div>
+    <div class="settings-list" style="margin-top:12px;">
+
+      <div class="setting-row"><div class="setting-info"><div class="setting-name">Glyph Interface Sync</div><div class="setting-sub">Flash Glyph on gesture (Nothing phones only, auto-disabled on CMF)</div></div><div class="toggle on" onclick="toggleEl(this)"></div></div>
+      <div class="setting-row"><div class="setting-info"><div class="setting-name">Pocket prevention</div><div class="setting-sub">Don't trigger in pocket via proximity</div></div><div class="toggle on" onclick="toggleEl(this)"></div></div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-haptic">
+    <div class="haptic-card">
+      <div class="haptic-header"><div class="haptic-icon">📳</div><div><div style="font-size:13px;font-weight:500;">Haptic intensity</div><div style="font-size:11px;color:var(--text2);margin-top:2px;">Your original feature — now with 5 types</div></div></div>
+      <div class="haptic-body">
+        <div class="haptic-levels"><div class="haptic-level" onclick="setHaptic(0,this)"><div class="haptic-bars"><div class="h-bar" style="height:4px;"></div></div><div class="haptic-level-name">Off</div></div><div class="haptic-level active" onclick="setHaptic(1,this)"><div class="haptic-bars"><div class="h-bar" style="height:5px;"></div><div class="h-bar" style="height:9px;"></div></div><div class="haptic-level-name">Soft</div></div><div class="haptic-level" onclick="setHaptic(2,this)"><div class="haptic-bars"><div class="h-bar" style="height:5px;"></div><div class="h-bar" style="height:10px;"></div><div class="h-bar" style="height:14px;"></div></div><div class="haptic-level-name">Medium</div></div><div class="haptic-level" onclick="setHaptic(3,this)"><div class="haptic-bars"><div class="h-bar" style="height:5px;"></div><div class="h-bar" style="height:9px;"></div><div class="h-bar" style="height:13px;"></div><div class="h-bar" style="height:16px;"></div></div><div class="haptic-level-name">Strong</div></div></div>
+        <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border); display:flex; flex-direction:column; gap:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-size:12px;color:var(--text2)">Haptic on gesture</span><div class="toggle on" id="haptic-toggle" onclick="toggleHapticConfirm(this)"></div></div>
+          <div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-size:12px;color:var(--text2)">Glyph-synced pattern</span><div class="toggle" onclick="toggleEl(this)"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-overlay">
+    <div class="settings-list"><div class="setting-row"><div class="setting-info"><div class="setting-name">Visual overlay</div><div class="setting-sub">Show on-screen indicator — your original feature</div></div><div class="toggle on" onclick="toggleEl(this)"></div></div></div>
+    <div class="overlay-preview"><div class="overlay-demo" id="overlay-demo">⚡</div></div>
+    <div style="margin:8px 16px;"><div style="font-size:10px;letter-spacing:0.1em;color:var(--text3);text-transform:uppercase;margin-bottom:8px;">Overlay style</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div class="action-option selected" id="style-stock" onclick="setOverlayStyle('stock')"><div class="action-opt-icon">⭕</div><div class="action-opt-name">Stock</div><div class="action-opt-desc">Circular popup</div></div>
+        <div class="action-option" id="style-nothing" onclick="setOverlayStyle('nothing')"><div class="action-opt-icon">▎</div><div class="action-opt-name">Nothing Edge</div><div class="action-opt-desc">Glyph bar glow</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-timing">
+    <div class="timing-card"><div class="timing-title">Double click window</div><div class="timing-label"><span>Max gap between taps</span><span id="double-val">300 ms</span></div><input type="range" min="150" max="600" step="50" value="300" oninput="updateTiming('double-val', this.value, ' ms'); document.getElementById('timing-double-label').textContent='≤ '+this.value+' ms'; if(window.Android) Android.saveTiming('double', this.value)"></div>
+    <div class="timing-card"><div class="timing-title">Long hold threshold</div><div class="timing-label"><span>Hold duration</span><span id="long-val">600 ms</span></div><input type="range" min="400" max="1500" step="100" value="600" oninput="updateTiming('long-val', this.value, ' ms'); document.getElementById('timing-long-label').textContent='Hold ≥ '+this.value+' ms'; if(window.Android) Android.saveTiming('long', this.value)"></div>
+    <div class="timing-card"><div class="timing-title">Triple click window</div><div class="timing-label"><span>Max gap</span><span id="triple-val">400 ms</span></div><input type="range" min="200" max="800" step="50" value="400" oninput="updateTiming('triple-val', this.value, ' ms')"></div>
+  </div>
+
+  <div class="bottom-info">
+    <div class="info-dot"></div>
+    <div class="info-text"><b>Why AccessibilityService is needed:</b> Nothing's Essential Key is a system key. Android only lets AccessibilityService with <code>flagRequestFilterKeyEvents</code> intercept it and block the default Essential Space. No data is collected. The service only listens for your Essential Key to remap it.<br><br><b>How to enable:</b> Settings → Accessibility → Essential Remapper Pro → Enable → Allow. Then grant "Display over other apps".<br><br><b>Auto detection:</b> Works for Nothing Phone 1/2/2a/3/3a/4/4a and CMF Phone 1/2/2 Pro. For Phone 3/4, Essential Key is hardware. For older phones, Learning Mode captures any key you assign.</div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
+  <div class="modal-sheet"><div class="modal-handle"></div><div class="modal-title" id="modal-title">Action</div><div class="modal-sub" id="modal-sub">Choose action</div><div class="action-grid" id="action-grid"></div><button class="modal-btn" onclick="saveAction()">Save</button><button class="modal-cancel" onclick="closeModal()">Cancel</button></div>
+</div>
+
+<script>
+const ACTIONS = [
+  { id:'flashlight', icon:'🔦', name:'Flashlight', desc:'Toggle torch' },
+  { id:'camera', icon:'📷', name:'Camera', desc:'Open camera' },
+  { id:'screenshot', icon:'📸', name:'Screenshot', desc:'System screenshot' },
+  { id:'assistant', icon:'🎙️', name:'Assistant', desc:'Google Assistant' },
+  { id:'dnd', icon:'🔕', name:'DND', desc:'Toggle DND' },
+  { id:'rotation', icon:'🔄', name:'Rotation', desc:'Toggle rotation' },
+  { id:'media', icon:'⏯️', name:'Play/Pause', desc:'Media' },
+  { id:'next', icon:'⏭️', name:'Next Track', desc:'Media next' },
+  { id:'notification', icon:'🔔', name:'Notifications', desc:'Open shade' },
+  { id:'qs', icon:'⚡', name:'Quick Settings', desc:'Open QS' },
+  { id:'lock', icon:'🔒', name:'Lock Screen', desc:'Lock device' },
+  { id:'recents', icon:'📑', name:'Recents', desc:'Recent apps' },
+  { id:'glyph', icon:'💡', name:'Toggle Glyph', desc:'Glyph interface' },
+  { id:'essential_space', icon:'🗂️', name:'Essential Space', desc:'Nothing Space' },
+  { id:'chatgpt', icon:'🤖', name:'AI App', desc:'ChatGPT/Gemini' },
+  { id:'none', icon:'🚫', name:'None', desc:'Disabled' },
+];
+const assignments = { single:'flashlight', double:'camera', triple:'screenshot', long:'assistant' };
+let currentGesture=null, selectedAction=null;
+function getAndroidDeviceInfo(){ if(window.Android && window.Android.getDeviceInfo){ try{return JSON.parse(window.Android.getDeviceInfo());}catch(e){return null;}} return null; }
+function openModal(gesture){ currentGesture=gesture; selectedAction=assignments[gesture]; const titles={single:'Single click',double:'Double click',triple:'Triple click',long:'Long hold'}; document.getElementById('modal-title').textContent=titles[gesture]+' action'; document.getElementById('modal-sub').textContent='Choose what happens on '+titles[gesture].toLowerCase(); const grid=document.getElementById('action-grid'); grid.innerHTML=''; ACTIONS.forEach(a=>{ const div=document.createElement('div'); div.className='action-option'+(a.id===selectedAction?' selected':''); div.innerHTML=`<div class="action-opt-icon">${a.icon}</div><div class="action-opt-name">${a.name}</div><div class="action-opt-desc">${a.desc}</div>`; div.onclick=()=>{ grid.querySelectorAll('.action-option').forEach(el=>el.classList.remove('selected')); div.classList.add('selected'); selectedAction=a.id; if(navigator.vibrate) navigator.vibrate(20); }; grid.appendChild(div); }); document.getElementById('modal').classList.add('open'); }
+function saveAction(){ if(!currentGesture||!selectedAction){closeModal();return;} assignments[currentGesture]=selectedAction; const a=ACTIONS.find(x=>x.id===selectedAction); document.getElementById('action-'+currentGesture).textContent=a?a.name:selectedAction; if(window.Android && window.Android.saveAction){ window.Android.saveAction(currentGesture, selectedAction); } closeModal(); if(navigator.vibrate) navigator.vibrate([30,40,30]); }
+function closeModal(){ document.getElementById('modal').classList.remove('open'); }
+function closeModalOutside(e){ if(e.target.id==='modal') closeModal(); }
+function switchTab(tab,btn){ document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active')); btn.classList.add('active'); document.getElementById('panel-'+tab).classList.add('active'); }
+function toggleEl(el){ el.classList.toggle('on'); }
+function setHaptic(level,el){ document.querySelectorAll('.haptic-level').forEach(l=>l.classList.remove('active')); el.classList.add('active'); if(window.Android && window.Android.vibrate){ window.Android.vibrate(level*30);} else if(navigator.vibrate && level>0) navigator.vibrate(level*30); }
+function toggleHapticConfirm(el){ el.classList.toggle('on'); }
+function updateTiming(id,val,suffix){ document.getElementById(id).textContent=val+suffix; }
+let overlayStyle='stock';
+function setOverlayStyle(style){ overlayStyle=style; document.getElementById('style-stock').classList.toggle('selected',style==='stock'); document.getElementById('style-nothing').classList.toggle('selected',style==='nothing'); const demo=document.getElementById('overlay-demo'); if(style==='nothing') demo.classList.add('nothing-style'); else demo.classList.remove('nothing-style'); if(window.Android) window.Android.saveOverlayStyle(style); }
+const NOTHING_PHONES = [
+  { ua:'A147', name:'Nothing Phone (4)', key:true },
+  { ua:'A148', name:'Nothing Phone (4a)', key:true },
+  { ua:'A062', name:'Nothing Phone (3)', key:true },
+  { ua:'A059', name:'Nothing Phone (3a)', key:true },
+  { ua:'A061', name:'Nothing Phone (3a) Pro', key:true },
+  { ua:'A065', name:'Nothing Phone (2)', key:false },
+  { ua:'A142', name:'Nothing Phone (2a)', key:false },
+  { ua:'A063', name:'Nothing Phone (1)', key:false },
+  { ua:'B094', name:'CMF Phone 2 Pro', key:true },
+  { ua:'A015', name:'CMF Phone 1', key:false },
+  { ua:'Nothing', name:'Nothing Phone', key:null },
+];
+function detectDevice(){
+  const btn=document.getElementById('detect-btn'); btn.textContent='...'; btn.disabled=true;
+  setTimeout(()=>{
+    const androidInfo=getAndroidDeviceInfo();
+    const dname=document.getElementById('device-name'); const dsub=document.getElementById('device-sub'); const dot=document.getElementById('status-dot'); const statusTxt=document.getElementById('status-text'); const permBanner=document.getElementById('perm-banner');
+    if(androidInfo){
+      dname.textContent=androidInfo.displayName; dsub.textContent=androidInfo.model+' | '+androidInfo.osVersion+' | Keycode: '+(androidInfo.detectedCode==-1?'Not learned - tap Learning Mode':androidInfo.detectedCode+' ('+androidInfo.detectedName+')');
+      dot.className=androidInfo.hasEssentialKey || androidInfo.detectedCode!=-1 ? 'status-dot green' : 'status-dot amber';
+      statusTxt.textContent=androidInfo.detectedCode!=-1 ? 'Essential button learned ✓' : 'Tap START LEARNING MODE';
+      document.getElementById('learning-btn').style.display='block';
+      if(androidInfo.accessibilityEnabled){ permBanner.classList.add('ok'); permBanner.innerHTML='<div class="perm-icon">✅</div><div class="perm-text"><b>Ready!</b><br>Accessibility enabled, remapper active.</div>'; }
+      btn.textContent='Re-scan'; btn.disabled=false; return;
+    }
+    const ua=navigator.userAgent; let matched=null; for(const p of NOTHING_PHONES){ if(ua.includes(p.ua)){ matched=p; break; } }
+    if(matched){ dname.textContent=matched.name; dot.className=matched.key===true?'status-dot green':matched.key===false?'status-dot red':'status-dot amber'; statusTxt.textContent=matched.key===true?'Essential button detected ✓':'No Essential button on this model'; dsub.textContent=matched.key===true?'Compatible — all features':'Essential Key not present'; }
+    else { dname.textContent=/Android/.test(ua)?'Android device':'Non-Android'; dot.className='status-dot red'; statusTxt.textContent='Open on Nothing Phone'; dsub.textContent='This UI works best on your Nothing/CMF phone'; }
+    btn.textContent='Re-scan'; btn.disabled=false;
+  },600);
+}
+let tapCount=0, tapTimer=null, holdTimer=null, isHolding=false;
+function lightDots(n){ for(let i=1;i<=4;i++){ const d=document.getElementById('gd'+i); if(d) d.classList.toggle('lit', i<=n); } }
+function showGesture(name,actionId){ const a=ACTIONS.find(x=>x.id===actionId); document.getElementById('gesture-name').textContent=name; document.getElementById('gesture-action').textContent=a?'→ '+a.name:''; const r1=document.getElementById('ring1'), r2=document.getElementById('ring2'); r1.classList.remove('pulse'); r2.classList.remove('pulse'); void r1.offsetWidth; r1.classList.add('pulse'); r2.classList.add('pulse'); }
+function onBtnDown(){ isHolding=false; holdTimer=setTimeout(()=>{ isHolding=true; tapCount=0; clearTimeout(tapTimer); lightDots(4); showGesture('Long hold', assignments.long); if(navigator.vibrate) navigator.vibrate(80); }, parseInt(document.getElementById('long-val')?.textContent||600)); }
+function onBtnUp(){ clearTimeout(holdTimer); if(isHolding){ isHolding=false; return; } tapCount++; lightDots(tapCount); clearTimeout(tapTimer); const doubleWindow=parseInt(document.getElementById('double-val')?.textContent||300); tapTimer=setTimeout(()=>{ if(tapCount===1) showGesture('Single click', assignments.single); else if(tapCount===2) showGesture('Double click', assignments.double); else showGesture('Triple click', assignments.triple); if(navigator.vibrate) navigator.vibrate(tapCount*25); setTimeout(()=>{ tapCount=0; lightDots(0); document.getElementById('gesture-name').textContent='—'; document.getElementById('gesture-action').textContent='Waiting for press'; },1800); }, doubleWindow); }
+function startLearning(){ const card=document.getElementById('learning-card'); card.classList.add('active'); if(window.Android && window.Android.startLearningMode){ window.Android.startLearningMode(); } let c=0; const iv=setInterval(()=>{ c++; const dot=document.getElementById('lp'+c); if(dot) dot.classList.add('on'); if(c>=3){ clearInterval(iv); setTimeout(()=>card.classList.remove('active'),1000); } }, 800); }
+function requestAccessibility(){ if(window.Android && window.Android.openAccessibility()){ window.Android.openAccessibility(); } else { alert('On your Nothing Phone: Settings → Accessibility → Essential Remapper Pro → Enable'); } }
+window.onload=()=>{ setTimeout(detectDevice, 600); };
+</script>
+
+<div class="perm-banner" id="notif-banner" style="margin-top:12px; background:#00b0ff15; border-color:#00b0ff40;">
+  <div class="perm-icon">🔔</div>
+  <div class="perm-text"><b>Notification Access (Optional)</b><br>For media-state detection & screenshot blocking bypass.</div>
+  <button class="btn-small" onclick="if(window.Android) Android.openNotificationAccess()">Enable</button>
+</div>
+</body>
+
+</html>

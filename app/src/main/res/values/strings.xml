@@ -1,0 +1,1 @@
+<resources><string name="app_name">Essential Re-mapper</string><string name="acc_desc">Intercepts Essential Key via KeyEvent, uses dispatchGesture, launches intents/shortcuts. No data collected. Required to remap and block Essential Space.</string></resources>
